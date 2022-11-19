@@ -2,11 +2,15 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django import forms
 
+
 class UserForm(forms.Form):
     SendMeText = forms.CharField()
 
 
 def index_page(request):
+    print("\xAB")  # это «
+    print("\xBB")  # это »
+    print("\x22")  # это "
     if request.method == 'POST':
         s1 = request.POST.get('SendMeText')
         origin = s1[:]
