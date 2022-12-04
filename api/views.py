@@ -12,4 +12,5 @@ class StatisticsView(APIView):
     @extend_schema(request=StatisticsSerializer, responses=StatisticsSerializer)
     def get(self, request, s):
         stat = Statistics(s=s, symbol_count=collections.Counter(s), str_len=len(s))
+        print(StatisticsSerializer(instance=stat).data)
         return Response(StatisticsSerializer(instance=stat).data)
