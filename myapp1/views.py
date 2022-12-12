@@ -1,3 +1,5 @@
+import re
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django import forms
@@ -14,13 +16,17 @@ def index_page(request):
     if request.method == 'POST':
         s1 = request.POST.get('SendMeText')
         origin = s1[:]
-        s1 = s1.split()
-        for index, word in enumerate(origin.split()):
-            if word.startswith('"'):
-                s1[index] = s1[index].replace('"', '«', 1)
-            if word.endswith('"'):
-                s1[index] = s1[index].replace('"', '»', 1)
-        return HttpResponse(f'<h1>Ты ввел: {origin}</h1><h1>Отредактированный текст: {" ".join(s1)}</h1>')
+        changed = re.sub(
+            pattern=r'"$|" +',
+            repl="\xBB ",
+            string=re.sub(
+                pattern=r'^"| +"',
+                repl=" \xAB",
+                string=origin
+            ).strip(" ")
+        ).strip(" ")
+
+        return HttpResponse(f'<h1>Ты ввел: {origin}</h1><h1>Отредактированный текст: {changed}</h1>')
     else:
         userform = UserForm()
         return render(request, 'index.html', {'form': userform})
